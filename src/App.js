@@ -21,18 +21,26 @@ const handleSubmit = async (event) => {
 
     // response from node
     const {status,message} = response.data;
-    if(status==="success")
+    if(status==="success1")
     {
       alert(message);
       navigate('/main');
     }
-    else
+    else if(status === "success")
     {
       alert(message);
       navigate('/dash');
     }
+    else{
+      alert(message);
+      navigate('/');
+      resetFields();
+    }
 };
-
+const resetFields = () => {
+  setEmail('');
+  setPassword('');
+};
   return (
     <form onSubmit={handleSubmit}>
       <div>
