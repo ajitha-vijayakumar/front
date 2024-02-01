@@ -5,6 +5,10 @@ import React, { useState, useEffect } from 'react';
 function Main(){
     const [tableData, setTableData] = useState([]);  
     const [id, setId] = useState('');
+    const [bookName, setbookName] = useState('');
+    const [author, setAuthor] = useState('');
+    const [category, setCategory] = useState('');
+    const [description, setDescription] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showModal, setShowModal] = useState(false); 
@@ -34,11 +38,13 @@ function Main(){
         }
     
     };
-    const handleAddUser = async (event) => {
+    const handleAddBook = async (event) => {
         event.preventDefault();
-        const response = await axios.post('http://127.0.0.1:8000/addUser', {
-        username: email,
-        password: password,
+        const response = await axios.post('http://127.0.0.1:8000/addBook', {
+          bookName : bookName,
+          author:author,
+          description :description,
+          category:category
         });
     
         const {status} = response.data;
@@ -85,25 +91,36 @@ function Main(){
           <div className="modal-dialog">
             <div className="modal-content">
               <div className="modal-header">
-                <h5 className="modal-title">Add User</h5>
+                <h5 className="modal-title">Add New Book</h5>
                 <button type="button" className="close" onClick={() => setShowModal(false)}>
                   &times;
                 </button>
               </div>
               <div className="modal-body">
               
-                <form onSubmit={handleAddUser}>
+                <form onSubmit={handleAddBook}>
 
                 <div className="form-group py-4">
-                  <label htmlFor="exampleInputEmail1">Email address</label>
-                  <input type="text" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email" value={email}
-                          onChange={(e) => setEmail(e.target.value)}/>
+                  <label htmlFor="bookName">Book Title</label>
+                  <input type="text" className="form-control" id="bookName" aria-describedby="bookName" placeholder="Enter Book Title" value={bookName}
+                          onChange={(e) => setbookName(e.target.value)}/>
                 </div>
                 <div className="form-group py-4">
-                  <label htmlFor="exampleInputPassword1">Password</label>
-                  <input type="password" className="form-control" id="exampleInputPassword1" placeholder="Password" value={password}
-                          onChange={(e) => setPassword(e.target.value)}/>
-                </div> 
+                  <label htmlFor="author">Author</label>
+                  <input type="text" className="form-control" id="author" aria-describedby="author" placeholder="Enter Author Name" value={author}
+                          onChange={(e) => setAuthor(e.target.value)}/>
+                </div>
+                <div className="form-group py-4">
+                  <label htmlFor="description">Description</label>
+                  <input type="text" className="form-control" id="description" aria-describedby="description" placeholder="Enter Description about the Book" value={description}
+                          onChange={(e) => setDescription(e.target.value)}/>
+                </div>
+                <div className="form-group py-4">
+                  <label htmlFor="category">Category</label>
+                  <input type="text" className="form-control" id="category" aria-describedby="category" placeholder="Enter the Category" value={category}
+                          onChange={(e) => setCategory(e.target.value)}/>
+                </div>
+                
                   <button type="submit" className="btn btn-primary">Add</button>
                 </form>
               </div>
@@ -142,21 +159,23 @@ function Main(){
           </div>
         </div>
       )}
-<button type="button" className="btn btn-success" onClick={() => setShowModal(true)}>Add User</button> 
+    <button type="button" className="btn btn-success" onClick={() => setShowModal(true)}>Add Book</button> 
         <table className="table table-hover">
               <thead>
                 <tr>
-                  <th scope="col">#</th>
-                  <th scope="col">Name</th>
-                  <th scope="col">Password</th>
+                  <th scope="col">S.no</th>
+                  <th scope="col">Title</th>
+                  <th scope="col">Author</th>
+                  <th scope="col">Category</th>
                 </tr>
               </thead>
               <tbody>
                 {tableData.map((row, index) => (
                   <tr key={index}>
                     <th scope="row">{index + 1}</th>
-                    <td>{row.username}</td>
-                    <td>{row.password}</td> 
+                    <td>{row.bookName}</td>
+                    <td>{row.author}</td> 
+                    <td>{row.category}</td> 
                     <td>{<button type="button" className="btn btn-danger" onClick={() => deleteUser(row._id)}>Delete</button>}
                         { <button type="button" className="btn btn-success" onClick={() => handleEdit(row)}>Edit</button>}
                     </td>
