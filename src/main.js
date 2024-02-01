@@ -1,6 +1,7 @@
 import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 function Main(){
     const [tableData, setTableData] = useState([]);  
@@ -9,13 +10,31 @@ function Main(){
     const [author, setAuthor] = useState('');
     const [category, setCategory] = useState('');
     const [description, setDescription] = useState('');
+    const [searchQuery, setSearchQuery] = useState('');
     const [showModal, setShowModal] = useState(false); 
     const [editModal, setEditModal] = useState(false); 
     const [viewModal, setViewModal] = useState(false); 
+    const navigate = useNavigate();
+
     useEffect(() => {
+      if (searchQuery.trim() !== '') {
+        // Perform real-time search when the searchQuery changes
+        performRealTimeSearch();
+      } else {
+        // Fetch all books if the search query is empty
         fetchTableData();
-      }, []);
+      }
+    }, [searchQuery]);
     
+  const performRealTimeSearch = async () => {
+    const response = await axios.post('http://127.0.0.1:8000/realTimeSearch', {
+      query: searchQuery,
+    });
+
+    const searchData = response.data;
+    setTableData(searchData);
+  };
+
     const fetchTableData = async () => {
         const response = await axios.post('http://127.0.0.1:8000/tableData');
         const data = response.data;
@@ -65,6 +84,17 @@ function Main(){
         setDescription('');
         setCategory('');
       };
+      // const handleSearch = async (event) => {
+      //   event.preventDefault();
+    
+      //  const response = await axios.post('http://127.0.0.1:8000/search', {
+      //     query: searchQuery,
+      //   });
+    
+      //   const searchData = response.data;
+      //   setTableData(searchData);
+      // };
+    
       const handleEdit = (book) => {
         setId(book._id);
         setbookName(book.bookName);
@@ -96,8 +126,7 @@ function Main(){
     };  
     return(
         <div> 
-        <h2>Welcome</h2><br/>
-         
+  
         {showModal && (
         <div className="modal" style={{ display: 'block', backgroundColor: 'rgba(0, 0, 0, 0.5)', zIndex: 999 }}>
           <div className="modal-dialog">
@@ -216,38 +245,90 @@ function Main(){
                           onChange={(e) => setCategory(e.target.value)} required/>
                 </div>
                   </form>
+                  <button type="button" className="submit" onClick={() => setViewModal(false)}>Close</button>
               </div>
             </div>
           </div>
         </div>
       )}
-    <button type="button" className="btn btn-success" onClick={() => setShowModal(true)}>Add Book</button> 
-        <table className="table table-hover">
-              <thead>
-                <tr>
-                  <th scope="col">S.no</th>
-                  <th scope="col">Title</th>
-                  <th scope="col">Author</th>
-                  <th scope="col">Category</th>
-                  <th scope="col">Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {tableData.map((row, index) => (
-                  <tr key={index}>
-                    <th scope="row">{index + 1}</th>
-                    <td>{row.bookName}</td>
-                    <td>{row.author}</td> 
-                    <td>{row.category}</td> 
-                    <td>
-                        {<button type="button" className="btn btn-success" onClick={() => handleView(row)}>View</button>}
-                        {<button type="button" className="btn btn-danger" onClick={() => deleteBook(row._id)}>Delete</button>}
-                        { <button type="button" className="btn btn-primary" onClick={() => handleEdit(row)}>Edit</button>}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-          </table>
+     <div className="dashboard-container">
+      <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+        <span className="navbar-brand">&nbsp;&nbsp;&nbsp;&nbsp;Dashboard</span>
+        <div className="collapse navbar-collapse">
+          <ul className="navbar-nav ml-auto">
+            <li className="nav-item ">
+            <form className="form-inline" >
+            <div className="input-group">
+            <input
+            className="form-control"
+            type="search"
+            placeholder="Search"
+            aria-label="Search"
+            style={{ width: '300px' }}  
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          <div className="input-group-append">
+            <button
+              className="btn btn-outline-success"
+              type="button"
+              onClick={performRealTimeSearch}
+            >
+              Search
+            </button>
+          </div>
+        </div>
+          </form>
+        </li>
+      </ul>
+      <ul className="navbar-nav ml-auto">
+        <li className="nav-item">
+              <button type="button" className="btn btn-danger" onClick={() => navigate('/')}>
+                Log Out
+              </button>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      <div className="container mt-4">
+      <button type="button" className="btn btn-success" onClick={() => setShowModal(true)}>
+                Add Book
+      </button>
+        <table className="table table-hover mt-4">
+          <thead>
+            <tr>
+              <th scope="col">S.no</th>
+              <th scope="col">Title</th>
+              <th scope="col">Author</th>
+              <th scope="col">Category</th>
+              <th scope="col">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {tableData.map((row, index) => (
+              <tr key={index}>
+                <th scope="row">{index + 1}</th>
+                <td>{row.bookName}</td>
+                <td>{row.author}</td>
+                <td>{row.category}</td>
+                <td>
+                  <button type="button" className="btn btn-success" onClick={() => handleView(row)}>
+                    View
+                  </button>
+                  <button type="button" className="btn btn-danger" onClick={() => deleteBook(row._id)}>
+                    Delete
+                  </button>
+                  <button type="button" className="btn btn-primary" onClick={() => handleEdit(row)}>
+                    Edit
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+        </div>
         </div>
     );
 }
