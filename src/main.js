@@ -22,8 +22,8 @@ function Main(){
         const data = response.data;
         setTableData(data);
     };
-    const deleteUser = async (userId) => {
-        const response = await axios.delete(`http://127.0.0.1:8000/deleteUser/${userId}`);
+    const deleteBook = async (bookId) => {
+        const response = await axios.delete(`http://127.0.0.1:8000/deleteBook/${bookId}`);
         fetchTableData();
     
         const {status,message} = response.data;
@@ -34,7 +34,7 @@ function Main(){
         }
         else
         {
-        alert('Error deleting user data');
+        alert('Error deleting book data');
         }
     
     };
@@ -176,7 +176,7 @@ function Main(){
                     <td>{row.bookName}</td>
                     <td>{row.author}</td> 
                     <td>{row.category}</td> 
-                    <td>{<button type="button" className="btn btn-danger" onClick={() => deleteUser(row._id)}>Delete</button>}
+                    <td>{<button type="button" className="btn btn-danger" onClick={() => deleteBook(row._id)}>Delete</button>}
                         { <button type="button" className="btn btn-success" onClick={() => handleEdit(row)}>Edit</button>}
                     </td>
                   </tr>
