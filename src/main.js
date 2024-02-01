@@ -11,6 +11,7 @@ function Main(){
     const [description, setDescription] = useState('');
     const [showModal, setShowModal] = useState(false); 
     const [editModal, setEditModal] = useState(false); 
+    const [viewModal, setViewModal] = useState(false); 
     useEffect(() => {
         fetchTableData();
       }, []);
@@ -85,7 +86,14 @@ function Main(){
         alert("Successfully edited");
         fetchTableData();
     };
-        
+    const handleView = (book) => {
+      setId(book._id);
+      setbookName(book.bookName);
+      setAuthor(book.author);
+      setDescription(book.description);
+      setCategory(book.category);
+      setViewModal(true);
+    };  
     return(
         <div> 
         <h2>Welcome</h2><br/>
@@ -107,22 +115,22 @@ function Main(){
                 <div className="form-group py-4">
                   <label htmlFor="bookName">Book Title</label>
                   <input type="text" className="form-control" id="bookName" aria-describedby="bookName" placeholder="Enter Book Title" value={bookName}
-                          onChange={(e) => setbookName(e.target.value)}/>
+                          onChange={(e) => setbookName(e.target.value)}required/>
                 </div>
                 <div className="form-group py-4">
                   <label htmlFor="author">Author</label>
                   <input type="text" className="form-control" id="author" aria-describedby="author" placeholder="Enter Author Name" value={author}
-                          onChange={(e) => setAuthor(e.target.value)}/>
+                          onChange={(e) => setAuthor(e.target.value)} required/>
                 </div>
                 <div className="form-group py-4">
                   <label htmlFor="description">Description</label>
                   <input type="text" className="form-control" id="description" aria-describedby="description" placeholder="Enter Description about the Book" value={description}
-                          onChange={(e) => setDescription(e.target.value)}/>
+                          onChange={(e) => setDescription(e.target.value)} required/>
                 </div>
                 <div className="form-group py-4">
                   <label htmlFor="category">Category</label>
                   <input type="text" className="form-control" id="category" aria-describedby="category" placeholder="Enter the Category" value={category}
-                          onChange={(e) => setCategory(e.target.value)}/>
+                          onChange={(e) => setCategory(e.target.value)} required/>
                 </div>
                 
                   <button type="submit" className="btn btn-primary">Add</button>
@@ -149,25 +157,65 @@ function Main(){
                 <div className="form-group py-4">
                   <label htmlFor="bookName">Book Title</label>
                   <input type="text" className="form-control" id="bookName" aria-describedby="bookName" placeholder="Enter Book Title" value={bookName}
-                          onChange={(e) => setbookName(e.target.value)}/>
+                          onChange={(e) => setbookName(e.target.value)} required/>
                 </div>
                 <div className="form-group py-4">
                   <label htmlFor="author">Author</label>
                   <input type="text" className="form-control" id="author" aria-describedby="author" placeholder="Enter Author Name" value={author}
-                          onChange={(e) => setAuthor(e.target.value)}/>
+                          onChange={(e) => setAuthor(e.target.value)} required/>
                 </div>
                 <div className="form-group py-4">
                   <label htmlFor="description">Description</label>
                   <input type="text" className="form-control" id="description" aria-describedby="description" placeholder="Enter Description about the Book" value={description}
-                          onChange={(e) => setDescription(e.target.value)}/>
+                          onChange={(e) => setDescription(e.target.value)} required/>
                 </div>
                 <div className="form-group py-4">
                   <label htmlFor="category">Category</label>
                   <input type="text" className="form-control" id="category" aria-describedby="category" placeholder="Enter the Category" value={category}
-                          onChange={(e) => setCategory(e.target.value)}/>
+                          onChange={(e) => setCategory(e.target.value)} required/>
                 </div>
                   <button type="submit" className="btn btn-primary">Edit</button>
                 </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+{viewModal && (
+        <div className="modal" style={{ display: 'block', backgroundColor: 'rgba(0, 0, 0, 0.5)', zIndex: 999 }}>
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">View Book Details</h5>
+                <button type="button" className="close" onClick={() => setViewModal(false)}>
+                  &times;
+                </button>
+              </div>
+              <div className="modal-body">
+              
+                <form >
+
+                <div className="form-group py-4">
+                  <label htmlFor="bookName">Book Title</label>
+                  <input type="text" className="form-control" id="bookName" aria-describedby="bookName" placeholder="Enter Book Title" value={bookName}
+                          onChange={(e) => setbookName(e.target.value)} required/>
+                </div>
+                <div className="form-group py-4">
+                  <label htmlFor="author">Author</label>
+                  <input type="text" className="form-control" id="author" aria-describedby="author" placeholder="Enter Author Name" value={author}
+                          onChange={(e) => setAuthor(e.target.value)} required/>
+                </div>
+                <div className="form-group py-4">
+                  <label htmlFor="description">Description</label>
+                  <input type="text" className="form-control" id="description" aria-describedby="description" placeholder="Enter Description about the Book" value={description}
+                          onChange={(e) => setDescription(e.target.value)} required/>
+                </div>
+                <div className="form-group py-4">
+                  <label htmlFor="category">Category</label>
+                  <input type="text" className="form-control" id="category" aria-describedby="category" placeholder="Enter the Category" value={category}
+                          onChange={(e) => setCategory(e.target.value)} required/>
+                </div>
+                  </form>
               </div>
             </div>
           </div>
@@ -181,6 +229,7 @@ function Main(){
                   <th scope="col">Title</th>
                   <th scope="col">Author</th>
                   <th scope="col">Category</th>
+                  <th scope="col">Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -190,8 +239,10 @@ function Main(){
                     <td>{row.bookName}</td>
                     <td>{row.author}</td> 
                     <td>{row.category}</td> 
-                    <td>{<button type="button" className="btn btn-danger" onClick={() => deleteBook(row._id)}>Delete</button>}
-                        { <button type="button" className="btn btn-success" onClick={() => handleEdit(row)}>Edit</button>}
+                    <td>
+                        {<button type="button" className="btn btn-success" onClick={() => handleView(row)}>View</button>}
+                        {<button type="button" className="btn btn-danger" onClick={() => deleteBook(row._id)}>Delete</button>}
+                        { <button type="button" className="btn btn-primary" onClick={() => handleEdit(row)}>Edit</button>}
                     </td>
                   </tr>
                 ))}
