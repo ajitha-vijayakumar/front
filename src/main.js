@@ -227,22 +227,22 @@ function Main(){
                 <div className="form-group py-4">
                   <label htmlFor="bookName">Book Title</label>
                   <input type="text" className="form-control" id="bookName" aria-describedby="bookName" placeholder="Enter Book Title" value={bookName}
-                          onChange={(e) => setbookName(e.target.value)} required/>
+                          onChange={(e) => setbookName(e.target.value)} required readOnly/>
                 </div>
                 <div className="form-group py-4">
                   <label htmlFor="author">Author</label>
                   <input type="text" className="form-control" id="author" aria-describedby="author" placeholder="Enter Author Name" value={author}
-                          onChange={(e) => setAuthor(e.target.value)} required/>
+                          onChange={(e) => setAuthor(e.target.value)} required readOnly/>
                 </div>
                 <div className="form-group py-4">
                   <label htmlFor="description">Description</label>
                   <input type="text" className="form-control" id="description" aria-describedby="description" placeholder="Enter Description about the Book" value={description}
-                          onChange={(e) => setDescription(e.target.value)} required/>
+                          onChange={(e) => setDescription(e.target.value)} required readOnly/>
                 </div>
                 <div className="form-group py-4">
                   <label htmlFor="category">Category</label>
                   <input type="text" className="form-control" id="category" aria-describedby="category" placeholder="Enter the Category" value={category}
-                          onChange={(e) => setCategory(e.target.value)} required/>
+                          onChange={(e) => setCategory(e.target.value)} required readOnly/>
                 </div>
                   </form>
                   <button type="button" className="submit" onClick={() => setViewModal(false)}>Close</button>
