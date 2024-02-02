@@ -133,7 +133,7 @@ function Main(){
             <div className="modal-content">
               <div className="modal-header">
                 <h5 className="modal-title">Add New Book</h5>
-                <button type="button" className="close" onClick={() => setShowModal(false)}>
+                <button type="button" className="close" onClick={() => {setShowModal(false); resetFields();}}>
                   &times;
                 </button>
               </div>
@@ -175,7 +175,7 @@ function Main(){
             <div className="modal-content">
               <div className="modal-header">
                 <h5 className="modal-title">Edit Book Details</h5>
-                <button type="button" className="close" onClick={() => setEditModal(false)}>
+                <button type="button" className="close" onClick={() => {setEditModal(false); resetFields();}}>
                   &times;
                 </button>
               </div>
@@ -216,7 +216,7 @@ function Main(){
             <div className="modal-content">
               <div className="modal-header">
                 <h5 className="modal-title">View Book Details</h5>
-                <button type="button" className="close" onClick={() => setViewModal(false)}>
+                <button type="button" className="close" onClick={() =>{setViewModal(false); resetFields();}}>
                   &times;
                 </button>
               </div>
@@ -245,7 +245,7 @@ function Main(){
                           onChange={(e) => setCategory(e.target.value)} required readOnly/>
                 </div>
                   </form>
-                  <button type="button" className="submit" onClick={() => setViewModal(false)}>Close</button>
+                  <button type="button" className="submit" onClick={() =>{setViewModal(false); resetFields();}}>Close</button>
               </div>
             </div>
           </div>
