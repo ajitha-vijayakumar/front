@@ -292,44 +292,22 @@ function Dash(){
       </nav>
 
       <div className="container mt-4">
-      <button type="button" className="btn btn-success" onClick={() => setShowModal(true)}>
-                Add Book
-      </button>
-        <table className="table table-hover mt-4">
-          <thead>
-            <tr>
-              <th scope="col">S.no</th>
-              <th scope="col">Title</th>
-              <th scope="col">Author</th>
-              <th scope="col">Category</th>
-              <th scope="col">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {tableData.map((row, index) => (
-              <tr key={index}>
-                <th scope="row">{index + 1}</th>
-                <td>{row.bookName}</td>
-                <td>{row.author}</td>
-                <td>{row.category}</td>
-                <td>
-                  <button type="button" className="btn btn-success" onClick={() => handleView(row)}>
-                    View
-                  </button>
-                  <button type="button" className="btn btn-danger" onClick={() => deleteBook(row._id)}>
-                    Delete
-                  </button>
-                  <button type="button" className="btn btn-primary" onClick={() => handleEdit(row)}>
-                    Edit
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      
+      <div className="row">
+        {tableData.map((row, index) => (
+          <div className="col-md-4 mb-4" key={index}>
+            <div className="card">
+              <div className="card-body" style={{ height: '200px' }}>
+                <h5 className="card-title">{row.bookName}</h5>
+                <h6 className="card-subtitle mb-2 text-muted">{row.author}</h6>
+                <p className="card-text">{row.description}</p>
+                <p className="card-text">{row.category}</p>
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
-        </div>
-        </div>
+        </div></div></div>
     );
 }
 export default Dash;
