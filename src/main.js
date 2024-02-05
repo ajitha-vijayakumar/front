@@ -269,7 +269,7 @@ function Main(){
       )}
      <div className="dashboard-container">
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
-        <span className="navbar-brand">&nbsp;&nbsp;&nbsp;&nbsp;Dashboard</span>
+        <span className="navbar-brand">&nbsp;&nbsp;&nbsp;&nbsp;MKCE BOOKSTORES</span>
         <div className="collapse navbar-collapse">
           <ul className="navbar-nav ml-auto">
             <li className="nav-item ">

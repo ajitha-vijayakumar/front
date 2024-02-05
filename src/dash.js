@@ -2,6 +2,7 @@ import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Pagination } from 'react-bootstrap';
 
 function CategoryDashboard({ categories, handleView }) {
   // Create an object to track unique categories
@@ -24,7 +25,7 @@ function CategoryDashboard({ categories, handleView }) {
           <div className="col-md-4 mb-4" key={index}>
             <div className="card" style={{ backgroundColor: '#f2f2f2', border: '1px solid #ddd', borderRadius: '8px', cursor: 'pointer' }}onClick={() => handleView(category)}>
               <div className="card-body">
-                <h5 className="card-title">{category}</h5>
+                <h5 className="card-title">{category.toUpperCase()}</h5>
               </div>
             </div>
           </div>
@@ -42,14 +43,22 @@ function Dash() {
  const [viewModal, setViewModal] = useState(false); 
   const [selectedCategory, setSelectedCategory] = useState('');
   const [categoryBooks, setCategoryBooks] = useState([]);
-
+  const [showModal, setShowModal] = useState(false); 
+  const [currentPage, setCurrentPage] = useState(1);
+  const booksPerPage =5;  // Set the number of books to display per page
+  const [id, setId] = useState('');
+    const [bookName, setbookName] = useState('');
+    const [author, setAuthor] = useState('');
+    const [category, setCategory] = useState('');
+    const [description, setDescription] = useState('');
+  
   useEffect(() => {
     if (searchQuery.trim() !== '') {
       performRealTimeSearch();
     } else {
       fetchTableData();
     }
-  }, [searchQuery]);
+  }, [searchQuery, currentPage]);
 
   useEffect(() => {
     fetchCategories();
@@ -67,7 +76,12 @@ function Dash() {
       console.error('Error fetching categories:', error);
     }
   };
-  
+  const resetFields = () => {
+    setbookName('');
+    setAuthor('');
+    setDescription('');
+    setCategory('');
+  };
 
   const performRealTimeSearch = async () => {
     try {
@@ -91,6 +105,15 @@ function Dash() {
       console.error('Error fetching table data:', error);
     }
   };
+  const handleShow = (book) => {
+    setId(book._id);
+    setbookName(book.bookName);
+    setAuthor(book.author);
+    setDescription(book.description);
+    setCategory(book.category);
+    setShowModal(true);
+  };  
+
   const handleView = (category) => {
     (async () => {
       try {
@@ -106,7 +129,16 @@ function Dash() {
       }
     })();
   };
-  
+   // Logic to get current books based on currentPage
+   const indexOfLastBook = currentPage * booksPerPage;
+   const indexOfFirstBook = indexOfLastBook - booksPerPage;
+   const currentBooks = tableData.slice(indexOfFirstBook, indexOfLastBook);
+ 
+   const totalBooks = tableData.length;
+   // Render pagination component
+   const paginate = (pageNumber) => setCurrentPage(pageNumber);
+ 
+   
   
   return (
     <div>
@@ -135,6 +167,47 @@ function Dash() {
                 <button type="button" className="btn btn-secondary" onClick={() => setViewModal(false)}>
                   Close
                 </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      {showModal && (
+        <div className="modal" style={{ display: 'block', backgroundColor: 'rgba(0, 0, 0, 0.5)', zIndex: 999 }}>
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">View Book Details</h5>
+                <button type="button" className="close" onClick={() =>{setShowModal(false); resetFields();}}>
+                  &times;
+                </button>
+              </div>
+              <div className="modal-body">
+              
+                <form >
+
+                <div className="form-group py-4">
+                  <label htmlFor="bookName">Book Title</label>
+                  <input type="text" className="form-control" id="bookName" aria-describedby="bookName" placeholder="Enter Book Title" value={bookName}
+                          onChange={(e) => setbookName(e.target.value)} required readOnly/>
+                </div>
+                <div className="form-group py-4">
+                  <label htmlFor="author">Author</label>
+                  <input type="text" className="form-control" id="author" aria-describedby="author" placeholder="Enter Author Name" value={author}
+                          onChange={(e) => setAuthor(e.target.value)} required readOnly/>
+                </div>
+                <div className="form-group py-4">
+                  <label htmlFor="description">Description</label>
+                  <input type="text" className="form-control" id="description" aria-describedby="description" placeholder="Enter Description about the Book" value={description}
+                          onChange={(e) => setDescription(e.target.value)} required readOnly/>
+                </div>
+                <div className="form-group py-4">
+                  <label htmlFor="category">Category</label>
+                  <input type="text" className="form-control" id="category" aria-describedby="category" placeholder="Enter the Category" value={category}
+                          onChange={(e) => setCategory(e.target.value)} required readOnly/>
+                </div>
+                  </form>
+                  <button type="button" className="submit" onClick={() =>{setShowModal(false); resetFields();}}>Close</button>
               </div>
             </div>
           </div>
@@ -172,7 +245,41 @@ function Dash() {
         </nav>
       </div>
       <CategoryDashboard categories={categories} handleView={handleView}/>
-     
+      <div className="container mt-4">
+        <table className="table table-hover mt-4">
+          <thead>
+            <tr>
+              <th scope="col">S.no</th>
+              <th scope="col">Title</th>
+              <th scope="col">Author</th>
+              <th scope="col">Category</th>
+              <th scope="col">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {currentBooks.map((row, index) => (
+              <tr key={index}>
+                <th scope="row">{index + 1}</th>
+                <td>{row.bookName}</td>
+                <td>{row.author}</td>
+                <td>{row.category}</td>
+                <td>
+                  <button type="button" className="btn btn-success" onClick={() => handleShow(row)}>
+                    View
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <Pagination>
+            {Array.from({ length: Math.ceil(totalBooks / booksPerPage) }, (_, index) => (
+              <Pagination.Item key={index} active={index + 1 === currentPage} onClick={() => paginate(index + 1)}>
+                {index + 1}
+              </Pagination.Item>
+            ))}
+          </Pagination>
+          </div>
     </div>
   );
 }
