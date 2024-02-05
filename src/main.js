@@ -2,6 +2,7 @@ import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Pagination } from 'react-bootstrap';
 
 function Main(){
     const [tableData, setTableData] = useState([]);  
@@ -14,6 +15,9 @@ function Main(){
     const [showModal, setShowModal] = useState(false); 
     const [editModal, setEditModal] = useState(false); 
     const [viewModal, setViewModal] = useState(false); 
+    const [currentPage, setCurrentPage] = useState(1);
+    const booksPerPage =10;  // Set the number of books to display per page
+
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -24,7 +28,7 @@ function Main(){
         // Fetch all books if the search query is empty
         fetchTableData();
       }
-    }, [searchQuery]);
+    }, [searchQuery, currentPage]);
     
   const performRealTimeSearch = async () => {
     const response = await axios.post('http://127.0.0.1:8000/realTimeSearch', {
@@ -35,10 +39,12 @@ function Main(){
     setTableData(searchData);
   };
 
+  
     const fetchTableData = async () => {
         const response = await axios.post('http://127.0.0.1:8000/tableData');
         const data = response.data;
         setTableData(data);
+       
     };
     const deleteBook = async (bookId) => {
         const response = await axios.delete(`http://127.0.0.1:8000/deleteBook/${bookId}`);
@@ -68,14 +74,14 @@ function Main(){
         const {status} = response.data;
         if(status==="success")
         {
-          alert('User added successfully');
+          alert('Book added successfully');
           fetchTableData();
           setShowModal(false);
           resetFields();
         }
         else
         {
-        alert('Error adding user data');
+        alert('Error adding book data');
         }
     };
     const resetFields = () => {
@@ -124,6 +130,16 @@ function Main(){
       setCategory(book.category);
       setViewModal(true);
     };  
+
+    // Logic to get current books based on currentPage
+  const indexOfLastBook = currentPage * booksPerPage;
+  const indexOfFirstBook = indexOfLastBook - booksPerPage;
+  const currentBooks = tableData.slice(indexOfFirstBook, indexOfLastBook);
+
+  const totalBooks = tableData.length;
+  // Render pagination component
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
     return(
         <div> 
   
@@ -306,7 +322,7 @@ function Main(){
             </tr>
           </thead>
           <tbody>
-            {tableData.map((row, index) => (
+            {currentBooks.map((row, index) => (
               <tr key={index}>
                 <th scope="row">{index + 1}</th>
                 <td>{row.bookName}</td>
@@ -327,7 +343,14 @@ function Main(){
             ))}
           </tbody>
         </table>
-      </div>
+        <Pagination>
+            {Array.from({ length: Math.ceil(totalBooks / booksPerPage) }, (_, index) => (
+              <Pagination.Item key={index} active={index + 1 === currentPage} onClick={() => paginate(index + 1)}>
+                {index + 1}
+              </Pagination.Item>
+            ))}
+          </Pagination>
+          </div>
         </div>
         </div>
     );
