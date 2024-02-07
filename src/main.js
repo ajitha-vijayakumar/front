@@ -299,7 +299,7 @@ function Main(){
       </ul>
       <ul className="navbar-nav ml-auto">
         <li className="nav-item">
-              <button type="button" className="btn btn-danger" onClick={() => navigate('/')}>
+              <button type="button" className="btn btn-danger" style={{ marginLeft: '800px' }}  onClick={() => navigate('/')}>
                 Log Out
               </button>
             </li>
